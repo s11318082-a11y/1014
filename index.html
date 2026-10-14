@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE UNDERWORLD | 黑手黨乙女遊戲品牌網站</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#111114',
+                        pitch: '#080809',
+                        wine: 'var(--color-primary-wine)',
+                        wineLight: 'var(--color-wine-light)',
+                        gold: 'var(--color-accent-gold)',
+                        goldLight: 'var(--color-gold-light)',
+                        fog: '#D5D0CB'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'Playfair Display', 'Noto Serif TC', 'serif'],
+                        sans: ['Montserrat', 'Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800;900&family=Montserrat:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --color-primary-wine: #681F2B;
+            --color-wine-light: #9b2d3f;
+            --color-accent-gold: #C9A56A;
+            --color-gold-light: #e6c895;
+            --color-glow: rgba(104, 31, 43, 0.4);
+            --color-bg-gradient: rgba(104, 31, 43, 0.15);
+            --theme-transition-duration: 0.8s;
+        }
+
+        /* Faction Themes Color Dynamic Mapping */
+        body[data-faction="mafia"] {
+            --color-primary-wine: #681F2B;
+            --color-wine-light: #9b2d3f;
+            --color-accent-gold: #C9A56A;
+            --color-gold-light: #e6c895;
+            --color-glow: rgba(104, 31, 43, 0.5);
+            --color-bg-gradient: rgba(104, 31, 43, 0.15);
+        }
+
+        body[data-faction="crimson"] {
+            --color-primary-wine: #800000;
+            --color-wine-light: #B22222;
+            --color-accent-gold: #E8B4B8;
+            --color-gold-light: #F4D3D5;
+            --color-glow: rgba(178, 34, 34, 0.6);
+            --color-bg-gradient: rgba(128, 0, 0, 0.25);
+        }
+
+        body[data-faction="shadow"] {
+            --color-primary-wine: #2B1842;
+            --color-wine-light: #4A2B70;
+            --color-accent-gold: #A78BFA;
+            --color-gold-light: #C4B5FD;
+            --color-glow: rgba(124, 58, 237, 0.5);
+            --color-bg-gradient: rgba(43, 24, 66, 0.3);
+        }
+
+        body[data-faction="gold"] {
+            --color-primary-wine: #4A3B18;
+            --color-wine-light: #786028;
+            --color-accent-gold: #DAA520;
+            --color-gold-light: #FFF8DC;
+            --color-glow: rgba(218, 165, 32, 0.5);
+            --color-bg-gradient: rgba(74, 59, 24, 0.3);
+        }
+
+        /* Smooth Transition across the whole document */
+        body, button, div, span, h1, h2, h3, h4, p, a, svg, canvas, section {
+            transition: color var(--theme-transition-duration) ease,
+                        background-color var(--theme-transition-duration) ease,
+                        border-color var(--theme-transition-duration) ease,
+                        box-shadow var(--theme-transition-duration) ease;
+        }
+
+        body {
+            background-color: #080809;
+            color: #D5D0CB;
+            font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        @media (min-width: 1024px) {
+            body, button, a, input, select, textarea {
+                cursor: none !important;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080809;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-primary-wine);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-accent-gold);
+        }
+
+        /* CUSTOM OBSIDIAN CURSOR */
+        #cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-accent-gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            box-shadow: 0 0 10px var(--color-accent-gold);
+        }
+
+        #cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--color-accent-gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease-out, width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #cursor-text {
+            font-family: 'Cinzel', serif;
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: var(--color-accent-gold);
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+            font-weight: bold;
+            pointer-events: none;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        .cursor-hover #cursor-ring {
+            width: 62px;
+            height: 62px;
+            border-color: var(--color-accent-gold);
+            background-color: var(--color-bg-gradient);
+        }
+
+        .cursor-discover #cursor-ring {
+            width: 78px;
+            height: 78px;
+            border-color: var(--color-accent-gold);
+            background-color: var(--color-bg-gradient);
+        }
+
+        .cursor-discover #cursor-text {
+            opacity: 1;
+        }
+
+        /* TEXT ANIMATION A: Metallic Scanning Effect */
+        .metallic-text {
+            background: linear-gradient(
+                110deg, 
+                var(--color-primary-wine) 0%, 
+                var(--color-accent-gold) 30%, 
+                #ffffff 50%, 
+                var(--color-accent-gold) 70%, 
+                var(--color-primary-wine) 100%
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* TEXT ANIMATION C: Cinematic Mask Reveal */
+        .mask-reveal-wrap {
+            overflow: hidden;
+            display: block;
+        }
+        .mask-reveal-child {
+            display: block;
+            transform: translateY(110%);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mask-reveal-wrap.is-inview .mask-reveal-child {
+            transform: translateY(0%);
+        }
+
+        /* Glassmorphism Luxury Cards */
+        .glass-card {
+            background: rgba(17, 17, 20, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--color-accent-gold);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px var(--color-glow);
+        }
+
+        /* Magnetic Class Smooth Bounce */
+        .magnetic-target {
+            will-change: transform;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Buttons Styles */
+        .btn-primary {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-primary-wine) 0%, #0d0a0b 100%);
+            border: 1px solid var(--color-accent-gold);
+            color: var(--color-accent-gold);
+            font-family: 'Cinzel', serif;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px var(--color-glow);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--color-accent-gold), transparent);
+            opacity: 0.3;
+            transition: left 0.7s ease;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--color-glow);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--color-accent-gold);
+            color: #D5D0CB;
+            font-family: 'Cinzel', serif;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--color-accent-gold);
+            color: var(--color-accent-gold);
+            background: var(--color-bg-gradient);
+        }
+
+        /* Faction Burst Fullscreen Overlay Effect */
+        #faction-burst-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0;
+            background: radial-gradient(circle at center, var(--color-accent-gold) 0%, var(--color-primary-wine) 50%, transparent 80%);
+            transition: opacity 0.6s ease-out;
+        }
+        #faction-burst-overlay.active {
+            opacity: 0.35;
+        }
+
+        .parchment-bg {
+            background: radial-gradient(circle, #1a1618 0%, #0d0a0b 100%);
+            border: 2px solid var(--color-accent-gold);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 0 30px var(--color-glow);
+        }
+
+        .wax-seal {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, var(--color-wine-light), var(--color-primary-wine));
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+            border: 3px solid var(--color-primary-wine);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent-gold);
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .vignette-overlay {
+            background: radial-gradient(circle, transparent 40%, rgba(8, 8, 9, 0.85) 90%);
+            pointer-events: none;
+        }
+
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .tilt-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        .tilt-card-inner {
+            transition: transform 0.2s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        /* Screen Shake Animation for Click Impact */
+        .screen-shake {
+            animation: shake 0.25s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 1px, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, -1px, 0); }
+            40%, 60% { transform: translate3d(3px, 1px, 0); }
+        }
+
+        @media (max-width: 768px) {
+            #cursor-dot, #cursor-ring, #effect-canvas {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body data-faction="mafia" class="bg-pitch text-fog selection:bg-wine selection:text-gold">
+
+    <!-- Custom Cursor Nodes -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring">
+        <span id="cursor-text">View</span>
+    </div>
+
+    <!-- Mouse Trail & Click Blast Particle Canvas -->
+    <canvas id="effect-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-[9995]"></canvas>
+
+    <!-- Faction Burst Visual Overlay -->
+    <div id="faction-burst-overlay"></div>
+
+    <!-- 3D Three.js Background Canvas -->
+    <canvas id="webgl-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-60"></canvas>
+    <div class="fixed top-0 left-0 w-full h-full vignette-overlay z-10 pointer-events-none"></div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 w-full z-50 px-4 py-3 md:px-12 transition-all duration-300 bg-pitch/90 backdrop-blur-md border-b border-gold/20">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            
+            <a href="#hero" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 rounded-full border border-gold flex items-center justify-center bg-wine/30 group-hover:bg-wine transition-colors">
+                    <i class="fa-solid fa-crown text-gold text-xs"></i>
+                </div>
+                <span class="font-serif font-extrabold text-lg md:text-xl tracking-widest metallic-text">THE UNDERWORLD</span>
+            </a>
+            
+            <nav class="hidden lg:flex items-center gap-8 text-xs tracking-widest font-serif">
+                <a href="#hero" class="hover:text-gold transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold hover:after:w-full after:transition-all">01 INVITATION</a>
+                <a href="#worldview" class="hover:text-gold transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold hover:after:w-full after:transition-all">02 SECRETS</a>
+                <a href="#characters" class="hover:text-gold transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold hover:after:w-full after:transition-all">03 MEN</a>
+                <a href="#choice" class="hover:text-gold transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold hover:after:w-full after:transition-all">04 CHOICE</a>
+                <a href="#climax" class="hover:text-gold transition-colors py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-gold hover:after:w-full after:transition-all">05 ROMANCE</a>
+            </nav>
+
+            <!-- FACTION SWITCHER CONTROL PANEL -->
+            <div class="flex items-center gap-2 bg-midnight/90 p-1.5 rounded-full border border-gold/30 backdrop-blur-md">
+                <span class="text-[10px] font-serif text-gold tracking-widest px-2 hidden sm:inline"><i class="fa-solid fa-shield-halved mr-1"></i> FACTION</span>
+                <div class="flex items-center gap-1">
+                    <button onclick="switchFaction('mafia')" title="黑奢暗夜" class="faction-btn w-6 h-6 rounded-full bg-[#681F2B] border border-[#C9A56A] hover:scale-125 transition-transform flex items-center justify-center text-[10px] text-[#C9A56A] magnetic-target">
+                        <i class="fa-solid fa-gem text-[8px]"></i>
+                    </button>
+                    <button onclick="switchFaction('crimson')" title="教父誓言" class="faction-btn w-6 h-6 rounded-full bg-[#800000] border border-[#E8B4B8] hover:scale-125 transition-transform flex items-center justify-center text-[10px] text-[#E8B4B8] magnetic-target">
+                        <i class="fa-solid fa-rose text-[8px]"></i>
+                    </button>
+                    <button onclick="switchFaction('shadow')" title="影子執法" class="faction-btn w-6 h-6 rounded-full bg-[#2B1842] border border-[#A78BFA] hover:scale-125 transition-transform flex items-center justify-center text-[10px] text-[#A78BFA] magnetic-target">
+                        <i class="fa-solid fa-crosshairs text-[8px]"></i>
+                    </button>
+                    <button onclick="switchFaction('gold')" title="金權家族" class="faction-btn w-6 h-6 rounded-full bg-[#4A3B18] border border-[#DAA520] hover:scale-125 transition-transform flex items-center justify-center text-[10px] text-[#DAA520] magnetic-target">
+                        <i class="fa-solid fa-coins text-[8px]"></i>
+                    </button>
+                </div>
+
+                <button onclick="openPreRegisterModal()" class="btn-primary px-3 py-1.5 rounded-full text-[10px] md:text-xs tracking-wider font-semibold ml-2 hover:cursor-pointer magnetic-target">
+                    JOIN
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Scrollytelling Container -->
+    <main class="relative z-20">
+
+        <!-- 01 HERO -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center px-4 overflow-hidden pt-20">
+            <div class="absolute inset-0 bg-gradient-to-b from-pitch via-wine/10 to-pitch z-0"></div>
+
+            <div class="relative z-10 text-center max-w-4xl mx-auto px-4 flex flex-col items-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/40 bg-wine/20 text-gold text-xs font-serif tracking-widest mb-8 backdrop-blur-sm animate-pulse">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                    MAFIA DARK ROMANCE OTOME EXPERIENCE
+                </div>
+
+                <h1 class="font-serif font-black text-5xl md:text-8xl tracking-widest mb-6 metallic-text uppercase leading-none drop-shadow-2xl">
+                    THE UNDERWORLD
+                </h1>
+
+                <p class="font-serif text-lg md:text-2xl text-fog/80 tracking-widest mb-10 max-w-2xl font-light">
+                    EVERY SECRET HAS A PRICE.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center gap-6">
+                    <a href="#worldview" class="btn-primary px-10 py-4 rounded-md text-sm font-bold tracking-widest flex items-center gap-3 group magnetic-target">
+                        <span>ENTER THE UNDERWORLD</span>
+                        <i class="fa-solid fa-arrow-down text-gold group-hover:translate-y-1 transition-transform"></i>
+                    </a>
+                    
+                    <button onclick="openVideoTrailer()" class="btn-secondary px-8 py-4 rounded-md text-sm tracking-widest flex items-center gap-2 group magnetic-target">
+                        <i class="fa-solid fa-play text-gold text-xs group-hover:scale-125 transition-transform"></i>
+                        <span>WATCH TEASER</span>
+                    </button>
+                </div>
+
+                <div class="mt-20 scroll-indicator flex flex-col items-center gap-2 text-gold/60 text-xs tracking-widest">
+                    <span>SCROLL TO UNCOVER</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 WORLDVIEW -->
+        <section id="worldview" class="relative py-32 px-4 bg-pitch/90 border-t border-gold/10">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-5 relative">
+                        <div class="glass-card p-8 rounded-lg relative overflow-hidden group magnetic-target">
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-wine/20 rounded-full blur-3xl"></div>
+                            
+                            <div class="flex justify-between items-start mb-6 border-b border-gold/20 pb-4">
+                                <div>
+                                    <span class="text-xs font-serif text-gold tracking-widest block">CONFIDENTIAL DOSSIER</span>
+                                    <h3 class="font-serif text-xl font-bold text-fog">SYNDICATE ARCHIVES</h3>
+                                </div>
+                                <span class="px-2 py-1 bg-wine/40 text-wineLight text-[10px] font-mono tracking-wider border border-wine/50 rounded">TOP SECRET</span>
+                            </div>
+
+                            <div class="space-y-4 text-xs font-mono text-fog/70">
+                                <div class="p-3 bg-midnight/80 rounded border border-gold/20 hover:border-gold transition-colors cursor-hover">
+                                    <div class="text-gold font-bold mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> THE FIVE FAMILIES</div>
+                                    <p>控管深宵城的五大勢力，共同維持著血腥而優雅的地下平衡。</p>
+                                </div>
+                                <div class="p-3 bg-midnight/80 rounded border border-gold/20 hover:border-gold transition-colors cursor-hover">
+                                    <div class="text-gold font-bold mb-1"><i class="fa-solid fa-scroll mr-1"></i> THE BLOOD OATH</div>
+                                    <p>一旦簽署血色契約，靈魂與自由將永世歸屬於家族所有。</p>
+                                </div>
+                                <div class="p-3 bg-midnight/80 rounded border border-gold/20 hover:border-gold transition-colors cursor-hover">
+                                    <div class="text-gold font-bold mb-1"><i class="fa-solid fa-gem mr-1"></i> THE FORBIDDEN HEIRESS</div>
+                                    <p>妳作為掌握家族關鍵祕密的繼承人，將成為權力風暴的中心。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="mask-reveal-wrap">
+                            <span class="mask-reveal-child font-serif text-gold tracking-widest text-sm font-semibold uppercase">02 / A WORLD OF SECRETS</span>
+                        </div>
+
+                        <div class="mask-reveal-wrap">
+                            <h2 class="mask-reveal-child font-serif text-3xl md:text-5xl font-extrabold text-fog tracking-wide">
+                                權力、罪惡與危險交織的<br><span class="metallic-text">地下帝國</span>
+                            </h2>
+                        </div>
+
+                        <div class="p-6 rounded-lg bg-midnight/50 border border-gold/20 relative">
+                            <p id="typewriter-text" class="font-serif text-sm md:text-base leading-relaxed text-fog/90 min-h-[140px]">
+                            </p>
+                            <div class="mt-4 flex items-center justify-between text-xs text-gold/60 font-mono">
+                                <span>[ STATUS: DECRYPTED ]</span>
+                                <button id="retype-btn" class="hover:text-gold flex items-center gap-1 cursor-hover magnetic-target">
+                                    <i class="fa-solid fa-rotate-right"></i> REPLAY ARCHIVE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 CHARACTERS -->
+        <section id="characters" class="relative py-32 px-4 bg-midnight/80 border-t border-gold/10">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-20">
+                    <span class="font-serif text-gold tracking-widest text-sm font-semibold uppercase block mb-2">03 / YOUR DANGEROUS MEN</span>
+                    <h2 class="font-serif text-4xl md:text-6xl font-black text-fog tracking-wide mb-4">
+                        危險且令人窒息的<span class="metallic-text">主宰者</span>
+                    </h2>
+                    <p class="text-sm text-fog/70 font-light">凝視深淵之際，誰能擄獲妳的靈魂？點擊探索角色秘密並觸發專屬色彩。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Dante -->
+                    <div class="tilt-card group cursor-discover magnetic-target" data-character="dante">
+                        <div class="tilt-card-inner glass-card rounded-xl overflow-hidden relative border border-wine/50 group-hover:border-gold transition-all duration-500">
+                            <div class="relative h-[480px] overflow-hidden bg-pitch">
+                                <div class="absolute inset-0 bg-gradient-to-t from-midnight via-transparent to-transparent z-10"></div>
+                                <svg class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="400" height="600" fill="#12080a"/>
+                                    <circle cx="200" cy="180" r="90" fill="var(--color-primary-wine)" opacity="0.4"/>
+                                    <path d="M140 280 C140 200, 260 200, 260 280 L280 500 L120 500 Z" fill="#1e1317"/>
+                                    <path d="M200 120 L230 220 L170 220 Z" fill="var(--color-accent-gold)" opacity="0.3"/>
+                                    <path d="M160 110 L180 130 L200 90 L220 130 L240 110 L230 140 L170 140 Z" fill="var(--color-accent-gold)"/>
+                                </svg>
+                                
+                                <div class="absolute top-4 left-4 z-20 px-3 py-1 bg-wine/80 text-gold text-[10px] font-serif tracking-widest rounded border border-gold/30">
+                                    THE DON / 教父
+                                </div>
+                            </div>
+
+                            <div class="p-6 relative z-20 -mt-20 bg-gradient-to-t from-midnight via-midnight/90 to-transparent">
+                                <h3 class="font-serif text-2xl font-bold text-fog group-hover:text-gold transition-colors">DANTE VISCONTI</h3>
+                                <p class="text-xs text-gold/80 font-serif tracking-widest mb-3">但丁·維斯康蒂</p>
+                                <p class="text-xs text-fog/70 italic mb-6 border-l-2 border-wine pl-3">
+                                    "臣服於我，我將把整個地下帝國做為妳的冕冠。"
+                                </p>
+                                <button onclick="showCharacterModal('dante')" class="w-full btn-secondary py-2.5 rounded text-xs font-serif tracking-wider">
+                                    DISCOVER HIM
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Valerius -->
+                    <div class="tilt-card group cursor-discover magnetic-target" data-character="valerius">
+                        <div class="tilt-card-inner glass-card rounded-xl overflow-hidden relative border border-gold/30 group-hover:border-gold transition-all duration-500">
+                            <div class="relative h-[480px] overflow-hidden bg-pitch">
+                                <div class="absolute inset-0 bg-gradient-to-t from-midnight via-transparent to-transparent z-10"></div>
+                                <svg class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="400" height="600" fill="#091410"/>
+                                    <circle cx="200" cy="180" r="90" fill="#13382c" opacity="0.4"/>
+                                    <path d="M130 260 C130 190, 270 190, 270 260 L290 500 L110 500 Z" fill="#10201a"/>
+                                    <path d="M170 120 L230 120 M200 100 L200 150" stroke="var(--color-accent-gold)" stroke-width="2"/>
+                                </svg>
+                                
+                                <div class="absolute top-4 left-4 z-20 px-3 py-1 bg-emerald-950/80 text-gold text-[10px] font-serif tracking-widest rounded border border-gold/30">
+                                    STRATEGIST / 律政謀臣
+                                </div>
+                            </div>
+
+                            <div class="p-6 relative z-20 -mt-20 bg-gradient-to-t from-midnight via-midnight/90 to-transparent">
+                                <h3 class="font-serif text-2xl font-bold text-fog group-hover:text-gold transition-colors">VALERIUS VANCE</h3>
+                                <p class="text-xs text-gold/80 font-serif tracking-widest mb-3">瓦勒里烏斯·范斯</p>
+                                <p class="text-xs text-fog/70 italic mb-6 border-l-2 border-emerald-800 pl-3">
+                                    "在我的法庭上，連無辜都能談判，唯獨對妳的愛不可談判。"
+                                </p>
+                                <button onclick="showCharacterModal('valerius')" class="w-full btn-secondary py-2.5 rounded text-xs font-serif tracking-wider">
+                                    DISCOVER HIM
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lucian -->
+                    <div class="tilt-card group cursor-discover magnetic-target" data-character="lucian">
+                        <div class="tilt-card-inner glass-card rounded-xl overflow-hidden relative border border-fog/30 group-hover:border-gold transition-all duration-500">
+                            <div class="relative h-[480px] overflow-hidden bg-pitch">
+                                <div class="absolute inset-0 bg-gradient-to-t from-midnight via-transparent to-transparent z-10"></div>
+                                <svg class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="400" height="600" fill="#101216"/>
+                                    <circle cx="200" cy="180" r="90" fill="#2d3545" opacity="0.3"/>
+                                    <path d="M140 270 C140 190, 260 190, 260 270 L280 500 L120 500 Z" fill="#171a21"/>
+                                    <circle cx="200" cy="130" r="25" stroke="var(--color-primary-wine)" stroke-width="2" fill="none"/>
+                                    <line x1="200" y1="100" x2="200" y2="160" stroke="var(--color-primary-wine)" stroke-width="1.5"/>
+                                    <line x1="170" y1="130" x2="230" y2="130" stroke="var(--color-primary-wine)" stroke-width="1.5"/>
+                                </svg>
+                                
+                                <div class="absolute top-4 left-4 z-20 px-3 py-1 bg-slate-900/80 text-gold text-[10px] font-serif tracking-widest rounded border border-gold/30">
+                                    SHADOW ASSASSIN / 影之執刑者
+                                </div>
+                            </div>
+
+                            <div class="p-6 relative z-20 -mt-20 bg-gradient-to-t from-midnight via-midnight/90 to-transparent">
+                                <h3 class="font-serif text-2xl font-bold text-fog group-hover:text-gold transition-colors">LUCIAN STERLING</h3>
+                                <p class="text-xs text-gold/80 font-serif tracking-widest mb-3">路西安·斯特林</p>
+                                <p class="text-xs text-fog/70 italic mb-6 border-l-2 border-slate-500 pl-3">
+                                    "我為金錢扣下扳機，但只願意為妳擋下子彈。"
+                                </p>
+                                <button onclick="showCharacterModal('lucian')" class="w-full btn-secondary py-2.5 rounded text-xs font-serif tracking-wider">
+                                    DISCOVER HIM
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 CONTRACT CHOICE -->
+        <section id="choice" class="relative py-32 px-4 bg-pitch border-t border-gold/10">
+            <div class="max-w-4xl mx-auto">
+                
+                <div class="parchment-bg rounded-2xl p-8 md:p-14 relative overflow-hidden">
+                    
+                    <div class="text-center mb-10">
+                        <span class="font-serif text-gold text-xs tracking-widest uppercase block mb-2">04 / MAKE YOUR CHOICE</span>
+                        <div class="mask-reveal-wrap">
+                            <h2 class="mask-reveal-child font-serif text-3xl md:text-5xl font-extrabold text-fog tracking-wider">
+                                EVERY CHOICE CHANGES EVERYTHING
+                            </h2>
+                        </div>
+                        <p class="text-xs text-gold/80 font-serif tracking-widest mt-2">簽署命運契約，選擇妳在深宵城中的生死立場</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs md:text-sm font-serif leading-relaxed text-fog/80 border-y border-gold/20 py-8 my-8 bg-black/40 p-6 rounded">
+                        <p class="indent-6">
+                            「立約人謹此宣告：自簽署本契約起，願將靈魂與命運交予地下家族。無論前路為至高無上的權力、亦或是墜落深淵的愛戀，皆不得悔改。」
+                        </p>
+                        <p class="indent-6 text-gold/90 italic">
+                            請在以下兩條命運分歧中作出抉擇：
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        
+                        <button onclick="makeContractChoice('capo')" class="p-6 rounded-xl border border-wine/50 hover:border-gold bg-wine/10 hover:bg-wine/30 transition-all text-left group relative overflow-hidden cursor-hover magnetic-target">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="wax-seal text-xs group-hover:scale-110">A</div>
+                                <div>
+                                    <h4 class="font-serif text-lg font-bold text-fog group-hover:text-gold">臣服於教父權威</h4>
+                                    <span class="text-[10px] text-gold/70 font-mono">PLEDGE ALLEGIANCE TO CAPO</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fog/70 font-light">
+                                成為尊貴的家族教母，與但丁共享至高權力，在黑夜中並肩統治整個帝國。
+                            </p>
+                        </button>
+
+                        <button onclick="makeContractChoice('mastermind')" class="p-6 rounded-xl border border-gold/30 hover:border-gold bg-gold/5 hover:bg-gold/15 transition-all text-left group relative overflow-hidden cursor-hover magnetic-target">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="wax-seal text-xs bg-gold text-pitch group-hover:scale-110">B</div>
+                                <div>
+                                    <h4 class="font-serif text-lg font-bold text-fog group-hover:text-gold">締結幕後秘密同盟</h4>
+                                    <span class="text-[10px] text-gold/70 font-mono">FORGE SECRET SHADOW PACT</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-fog/70 font-light">
+                                隱身於陰影之中，與謀臣及執刑者聯手，開創屬於妳自己的地下秩序。
+                            </p>
+                        </button>
+
+                    </div>
+
+                    <div id="choice-result" class="hidden mt-8 p-6 rounded-xl bg-wine/20 border border-gold text-center animate-fade-in">
+                        <i class="fa-solid fa-stamp text-3xl text-gold mb-2"></i>
+                        <h4 id="choice-title" class="font-serif text-xl font-bold text-gold mb-2"></h4>
+                        <p id="choice-desc" class="text-xs text-fog/90 leading-relaxed"></p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 CLIMAX -->
+        <section id="climax" class="relative min-h-screen flex items-center justify-center px-4 py-32 overflow-hidden bg-pitch">
+            
+            <div class="absolute inset-0 bg-radial from-wine/30 via-pitch to-pitch pointer-events-none"></div>
+
+            <div class="relative z-10 text-center max-w-4xl mx-auto space-y-8">
+                
+                <span class="font-serif text-gold tracking-widest text-sm font-semibold uppercase block">05 / CLIMAX CHAPTER</span>
+
+                <div class="mask-reveal-wrap">
+                    <h2 class="mask-reveal-child font-serif font-black text-6xl md:text-9xl text-fog tracking-tight uppercase metallic-text">
+                        LOVE IS A CRIME.
+                    </h2>
+                </div>
+
+                <p class="font-serif text-lg md:text-3xl text-fog/90 tracking-widest max-w-2xl mx-auto font-light leading-relaxed">
+                    「有些人，從相遇的那一刻起，就注定無法逃離。」
+                </p>
+
+                <div class="py-8 flex justify-center">
+                    <div class="w-24 h-24 rounded-full border border-gold/40 flex items-center justify-center relative bg-wine/10 animate-pulse">
+                        <i class="fa-solid fa-rose text-4xl text-wineLight"></i>
+                        <div class="absolute inset-0 rounded-full border border-gold animate-ping opacity-20"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 06 ENDING -->
+        <section id="ending" class="relative py-32 px-4 bg-midnight border-t border-gold/20">
+            <div class="max-w-5xl mx-auto text-center space-y-10">
+                
+                <div class="inline-block p-4 rounded-full border border-gold/30 bg-pitch">
+                    <i class="fa-solid fa-crown text-3xl text-gold"></i>
+                </div>
+
+                <h2 class="font-serif text-4xl md:text-6xl font-black text-fog tracking-widest uppercase">
+                    YOUR STORY BEGINS
+                </h2>
+
+                <p class="text-sm md:text-base text-fog/70 max-w-xl mx-auto font-serif">
+                    立即預約登記，優先解鎖「血色玫瑰 VIP 禮包」與專屬身份識別卡。
+                </p>
+
+                <div>
+                    <button onclick="openPreRegisterModal()" class="btn-primary px-12 py-5 rounded-lg text-base font-bold tracking-widest inline-flex items-center gap-3 cursor-hover magnetic-target">
+                        <span>BEGIN YOUR STORY</span>
+                        <i class="fa-solid fa-angle-right text-gold"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-center items-center gap-6 pt-12 text-xs text-fog/50 font-mono">
+                    <span class="px-2 py-1 border border-fog/30 rounded">18+ DARK ROMANCE</span>
+                    <span>•</span>
+                    <span>iOS / ANDROID / PC</span>
+                    <span>•</span>
+                    <span>FREE TO PLAY</span>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-20 bg-pitch border-t border-gold/10 py-12 px-6 text-xs text-fog/50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <span class="font-serif font-bold text-fog tracking-widest text-sm">THE UNDERWORLD</span>
+                <span>© 2026 THE UNDERWORLD STUDIO. ALL RIGHTS RESERVED.</span>
+            </div>
+
+            <div class="flex items-center gap-6 text-base text-fog/70">
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-discord"></i></a>
+                <a href="#" class="hover:text-gold transition-colors"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+
+            <button onclick="scrollToTop()" class="btn-secondary px-4 py-2 rounded text-[10px] tracking-widest flex items-center gap-2 cursor-hover magnetic-target">
+                <span>BACK TO TOP</span>
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Character Detail Modal -->
+    <div id="char-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pitch/90 backdrop-blur-xl hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card max-w-3xl w-full rounded-2xl overflow-hidden border border-gold/30 relative">
+            <button onclick="closeCharacterModal()" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full border border-gold/40 flex items-center justify-center text-fog hover:text-gold hover:border-gold transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-12">
+                <div id="modal-char-visual" class="md:col-span-5 h-64 md:h-auto bg-pitch relative flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-gold/20">
+                </div>
+
+                <div class="md:col-span-7 p-8 space-y-6">
+                    <div>
+                        <span id="modal-char-title" class="text-xs font-serif text-gold tracking-widest block mb-1"></span>
+                        <h3 id="modal-char-name" class="font-serif text-3xl font-black text-fog"></h3>
+                    </div>
+
+                    <p id="modal-char-quote" class="text-xs italic text-gold/90 border-l-2 border-wine pl-3 py-1 bg-wine/10 rounded-r"></p>
+
+                    <div class="space-y-3 font-mono text-xs">
+                        <div>
+                            <div class="flex justify-between mb-1 text-fog/70">
+                                <span>DANGER / 危險度</span>
+                                <span id="stat-danger-val">95%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-pitch rounded-full overflow-hidden border border-gold/20">
+                                <div id="stat-danger-bar" class="h-full bg-wine"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 text-fog/70">
+                                <span>OBSESSION / 獨佔欲</span>
+                                <span id="stat-obsession-val">90%</span>
+                            </div>
+                            <div class="w-full h-1.5 bg-pitch rounded-full overflow-hidden border border-gold/20">
+                                <div id="stat-obsession-bar" class="h-full bg-gold"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="modal-char-bio" class="text-xs text-fog/80 leading-relaxed font-light"></p>
+
+                    <button onclick="closeCharacterModal(); openPreRegisterModal()" class="w-full btn-primary py-3 rounded text-xs font-bold tracking-widest magnetic-target">
+                        PLEDGE YOUR ALLEGIANCE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIP Mafia Pass Modal -->
+    <div id="prereg-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pitch/90 backdrop-blur-xl hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card max-w-md w-full rounded-2xl p-8 border border-gold/40 relative">
+            <button onclick="closePreRegisterModal()" class="absolute top-4 right-4 text-fog hover:text-gold">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-id-card text-3xl text-gold mb-2"></i>
+                <h3 class="font-serif text-2xl font-bold text-fog">VIP MAFIA PASS</h3>
+                <p class="text-xs text-gold/70 font-serif">立即加入深宵城黑手黨地下家族</p>
+            </div>
+
+            <form onsubmit="handlePreRegisterSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-serif text-fog/80 mb-1">YOUR CODENAME / 代號</label>
+                    <input type="text" required placeholder="e.g. Lady Black" class="w-full px-4 py-2.5 rounded bg-pitch border border-gold/30 text-fog text-xs focus:outline-none focus:border-gold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-serif text-fog/80 mb-1">SECRET EMAIL / 電子信箱</label>
+                    <input type="email" required placeholder="your.name@underworld.com" class="w-full px-4 py-2.5 rounded bg-pitch border border-gold/30 text-fog text-xs focus:outline-none focus:border-gold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-serif text-fog/80 mb-1">CHOOSE YOUR FAMILY ALIGNMENT</label>
+                    <select class="w-full px-4 py-2.5 rounded bg-pitch border border-gold/30 text-fog text-xs focus:outline-none focus:border-gold">
+                        <option>Dante Visconti - Syndicate Godfather</option>
+                        <option>Valerius Vance - Underworld Lawyer</option>
+                        <option>Lucian Sterling - Shadow Assassin</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full btn-primary py-3 rounded text-xs font-bold tracking-widest mt-4 magnetic-target">
+                    GENERATE VIP PASS & REGISTER
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* ----------------------------------------------------
+           01. THREE.JS 3D ENGINE & DYNAMIC COLOR TRANSITION
+        ---------------------------------------------------- */
+        let scene, camera, renderer, particleSystem;
+        let particleColorsArray;
+
+        // Faction Colors Palette
+        const factionParticleColors = {
+            mafia: { primary: new THREE.Color('#681F2B'), accent: new THREE.Color('#C9A56A'), primaryHex: '#681F2B', accentHex: '#C9A56A' },
+            crimson: { primary: new THREE.Color('#800000'), accent: new THREE.Color('#E8B4B8'), primaryHex: '#800000', accentHex: '#E8B4B8' },
+            shadow: { primary: new THREE.Color('#2B1842'), accent: new THREE.Color('#A78BFA'), primaryHex: '#2B1842', accentHex: '#A78BFA' },
+            gold: { primary: new THREE.Color('#4A3B18'), accent: new THREE.Color('#DAA520'), primaryHex: '#4A3B18', accentHex: '#DAA520' }
+        };
+
+        let currentFactionKey = 'mafia';
+
+        function initThreeJS() {
+            const canvas = document.getElementById('webgl-canvas');
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 100;
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particleCount = 250;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            particleColorsArray = new Float32Array(particleCount * 3);
+
+            const preset = factionParticleColors.mafia;
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 300;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 300;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 300;
+
+                const mixColor = Math.random() > 0.5 ? preset.primary : preset.accent;
+                particleColorsArray[i * 3] = mixColor.r;
+                particleColorsArray[i * 3 + 1] = mixColor.g;
+                particleColorsArray[i * 3 + 2] = mixColor.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(particleColorsArray, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2.8,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.85
+            });
+
+            particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function updateParticleColors(factionKey) {
+            currentFactionKey = factionKey;
+            if (!particleSystem) return;
+            const preset = factionParticleColors[factionKey] || factionParticleColors.mafia;
+            const colorsAttr = particleSystem.geometry.attributes.color;
+
+            for (let i = 0; i < colorsAttr.count; i++) {
+                const targetColor = Math.random() > 0.5 ? preset.primary : preset.accent;
+                colorsAttr.setXYZ(i, targetColor.r, targetColor.g, targetColor.b);
+            }
+            colorsAttr.needsUpdate = true;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Resize effect canvas
+            if (effectCanvas) {
+                effectCanvas.width = window.innerWidth;
+                effectCanvas.height = window.innerHeight;
+            }
+        }
+
+        function animateThreeJS() {
+            requestAnimationFrame(animateThreeJS);
+            if (particleSystem) {
+                particleSystem.rotation.y += 0.0008;
+                particleSystem.rotation.x += 0.0004;
+            }
+            renderer.render(scene, camera);
+        }
+
+
+        /* ----------------------------------------------------
+           02. FACTION SWITCHER ENGINE
+        ---------------------------------------------------- */
+        function switchFaction(factionKey) {
+            document.body.setAttribute('data-faction', factionKey);
+            updateParticleColors(factionKey);
+
+            // Screen Flash Aura Burst
+            const burst = document.getElementById('faction-burst-overlay');
+            burst.classList.add('active');
+            setTimeout(() => burst.classList.remove('active'), 600);
+        }
+
+
+        /* ----------------------------------------------------
+           03. MOUSE TRAIL & CLICK BLAST SYSTEM (CANVAS 2D)
+        ---------------------------------------------------- */
+        let effectCanvas, ctx;
+        let trailParticles = [];
+        let clickRipples = [];
+        let clickBurstParticles = [];
+
+        class TrailParticle {
+            constructor(x, y, primaryColor, accentColor) {
+                this.x = x + (Math.random() - 0.5) * 8;
+                this.y = y + (Math.random() - 0.5) * 8;
+                this.size = Math.random() * 3 + 1;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8 - 0.3; // subtle float upward
+                this.color = Math.random() > 0.4 ? accentColor : primaryColor;
+                this.alpha = 0.8;
+                this.decay = Math.random() * 0.02 + 0.015;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.05;
+                this.isPetal = Math.random() < 0.25; // 25% chance of petal shape
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+                this.rotation += this.rotSpeed;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                if (this.isPetal) {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size * 2, this.size, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        class ClickRipple {
+            constructor(x, y, accentColor, primaryColor) {
+                this.x = x;
+                this.y = y;
+                this.radius = 5;
+                this.maxRadius = Math.random() * 40 + 70;
+                this.accentColor = accentColor;
+                this.primaryColor = primaryColor;
+                this.alpha = 1;
+                this.speed = 3.5;
+            }
+
+            update() {
+                this.radius += this.speed;
+                this.alpha = 1 - (this.radius / this.maxRadius);
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+
+                // Outer Ring
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = this.accentColor;
+                ctx.lineWidth = 2;
+                ctx.shadowColor = this.accentColor;
+                ctx.shadowBlur = 10;
+                ctx.stroke();
+
+                // Inner Seal Ring
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(1, this.radius * 0.6), 0, Math.PI * 2);
+                ctx.strokeStyle = this.primaryColor;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        class ClickBurstParticle {
+            constructor(x, y, primaryColor, accentColor) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 4 + 2;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.color = Math.random() > 0.5 ? accentColor : primaryColor;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.025 + 0.015;
+                this.friction = 0.96;
+                this.gravity = 0.08;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.1;
+                this.isSpark = Math.random() < 0.6;
+            }
+
+            update() {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+                this.rotation += this.rotSpeed;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                if (this.isSpark) {
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 2);
+                } else {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size * 2.5, this.size * 1.2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        function initEffectCanvas() {
+            effectCanvas = document.getElementById('effect-canvas');
+            ctx = effectCanvas.getContext('2d');
+            effectCanvas.width = window.innerWidth;
+            effectCanvas.height = window.innerHeight;
+
+            renderEffects();
+        }
+
+        function spawnTrailParticle(x, y) {
+            const preset = factionParticleColors[currentFactionKey] || factionParticleColors.mafia;
+            for (let i = 0; i < 2; i++) {
+                trailParticles.push(new TrailParticle(x, y, preset.primaryHex, preset.accentHex));
+            }
+        }
+
+        function triggerClickBlast(x, y) {
+            const preset = factionParticleColors[currentFactionKey] || factionParticleColors.mafia;
+
+            // Spawn Seal Ripples
+            clickRipples.push(new ClickRipple(x, y, preset.accentHex, preset.primaryHex));
+
+            // Spawn Burst Particles
+            for (let i = 0; i < 30; i++) {
+                clickBurstParticles.push(new ClickBurstParticle(x, y, preset.primaryHex, preset.accentHex));
+            }
+
+            // Screen Shake Effect
+            document.body.classList.add('screen-shake');
+            setTimeout(() => document.body.classList.remove('screen-shake'), 250);
+        }
+
+        function renderEffects() {
+            ctx.clearRect(0, 0, effectCanvas.width, effectCanvas.height);
+
+            // Update & Draw Trail
+            for (let i = trailParticles.length - 1; i >= 0; i--) {
+                const p = trailParticles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.alpha <= 0) trailParticles.splice(i, 1);
+            }
+
+            // Update & Draw Click Ripples
+            for (let i = clickRipples.length - 1; i >= 0; i--) {
+                const r = clickRipples[i];
+                r.update();
+                r.draw(ctx);
+                if (r.alpha <= 0) clickRipples.splice(i, 1);
+            }
+
+            // Update & Draw Click Sparks
+            for (let i = clickBurstParticles.length - 1; i >= 0; i--) {
+                const bp = clickBurstParticles[i];
+                bp.update();
+                bp.draw(ctx);
+                if (bp.alpha <= 0) clickBurstParticles.splice(i, 1);
+            }
+
+            requestAnimationFrame(renderEffects);
+        }
+
+
+        /* ----------------------------------------------------
+           04. OBSIDIAN CURSOR & MAGNETIC PULL ENGINE
+        ---------------------------------------------------- */
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        const cursorText = document.getElementById('cursor-text');
+
+        let mouseX = 0, mouseY = 0;
+        let ringX = 0, ringY = 0;
+
+        if (window.innerWidth > 768) {
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursorDot.style.left = `${mouseX}px`;
+                cursorDot.style.top = `${mouseY}px`;
+
+                // Spawn Trail Particles on mouse move
+                spawnTrailParticle(mouseX, mouseY);
+            });
+
+            window.addEventListener('mousedown', (e) => {
+                triggerClickBlast(e.clientX, e.clientY);
+            });
+
+            function renderCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+
+                cursorRing.style.left = `${ringX}px`;
+                cursorRing.style.top = `${ringY}px`;
+
+                requestAnimationFrame(renderCursor);
+            }
+            renderCursor();
+
+            document.querySelectorAll('.cursor-hover').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            });
+
+            document.querySelectorAll('.cursor-discover').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    document.body.classList.add('cursor-discover');
+                    cursorText.innerText = 'DISCOVER';
+                });
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-discover'));
+            });
+
+            // Magnetic Attraction Effect for Interactive Elements
+            document.querySelectorAll('.magnetic-target').forEach(el => {
+                el.addEventListener('mousemove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const deltaX = (e.clientX - centerX) * 0.2;
+                    const deltaY = (e.clientY - centerY) * 0.2;
+
+                    el.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = `translate3d(0, 0, 0)`;
+                });
+            });
+        }
+
+
+        /* ----------------------------------------------------
+           05. TYPEWRITER NARRATIVE ENGINE
+        ---------------------------------------------------- */
+        const storyText = "深宵城（Midnight City）是一座被夜色與禁忌權力籠罩的私密之城。五大黑手黨家族在暗處盤根錯節，維繫著危險而優雅的血色秩序。身為掌握家族機密鑰匙的繼承人，妳踏入了這場奢華而殘酷的權謀賽局。面前是三位極致危險卻又無法抗拒的男人——誓言、欲望與禁忌的愛戀，妳的選擇將決定帝國的存亡。";
+        const typewriterEl = document.getElementById('typewriter-text');
+        let typeIndex = 0;
+        let typeTimer;
+
+        function startTypewriter() {
+            typewriterEl.innerHTML = '';
+            typeIndex = 0;
+            clearInterval(typeTimer);
+
+            typeTimer = setInterval(() => {
+                if (typeIndex < storyText.length) {
+                    typewriterEl.innerHTML += storyText.charAt(typeIndex);
+                    typeIndex++;
+                } else {
+                    clearInterval(typeTimer);
+                    typewriterEl.innerHTML += '<span class="inline-block w-2 h-4 bg-gold ml-1 animate-pulse"></span>';
+                }
+            }, 35);
+        }
+
+        document.getElementById('retype-btn').addEventListener('click', startTypewriter);
+
+
+        /* ----------------------------------------------------
+           06. SCROLL TRIGGER REVEAL
+        ---------------------------------------------------- */
+        function initScrollAnimations() {
+            const observerOptions = { threshold: 0.2 };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-inview');
+                        if (entry.target.contains(typewriterEl) && typeIndex === 0) {
+                            startTypewriter();
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.mask-reveal-wrap').forEach(el => observer.observe(el));
+            observer.observe(typewriterEl.parentElement);
+        }
+
+
+        /* ----------------------------------------------------
+           07. CHARACTER DATA & MODAL SYSTEM
+        ---------------------------------------------------- */
+        const characterData = {
+            dante: {
+                faction: "crimson",
+                title: "THE DON / 家族教父",
+                name: "DANTE VISCONTI",
+                quote: "「臣服於我，我將把整個地下帝國做為妳的冕冠。」",
+                bio: "維斯康蒂家族的最年長掌權者。外表冷酷優雅，具有絕對的控制欲與強大的帝國統治力。視妳為他唯一的軟肋與不可侵犯的聖域。",
+                danger: "98%",
+                obsession: "95%"
+            },
+            valerius: {
+                faction: "gold",
+                title: "STRATEGIST / 律政謀臣",
+                name: "VALERIUS VANCE",
+                quote: "「在我的法庭上，連無辜都能談判，唯獨對妳的愛不可談判。」",
+                bio: "深宵城最強大的首席法律顧問兼戰略家。永遠保持極致的理性與冷靜，唯獨在面對妳時，會顯露出深藏於理智之下的危險執念。",
+                danger: "88%",
+                obsession: "92%"
+            },
+            lucian: {
+                faction: "shadow",
+                title: "SHADOW ASSASSIN / 影之執刑者",
+                name: "LUCIAN STERLING",
+                quote: "「我為金錢扣下扳機，但只願意為妳擋下子彈。」",
+                bio: "獨來獨往的頂級狙擊手與暗夜執行者。話語極少，沉默寡言，但在無數次的暗夜追殺中，始終像一道堅不可摧的影子護妳周全。",
+                danger: "94%",
+                obsession: "89%"
+            }
+        };
+
+        function showCharacterModal(key) {
+            const data = characterData[key];
+            if (!data) return;
+
+            if (data.faction) {
+                switchFaction(data.faction);
+            }
+
+            document.getElementById('modal-char-title').innerText = data.title;
+            document.getElementById('modal-char-name').innerText = data.name;
+            document.getElementById('modal-char-quote').innerText = data.quote;
+            document.getElementById('modal-char-bio').innerText = data.bio;
+
+            document.getElementById('stat-danger-val').innerText = data.danger;
+            document.getElementById('stat-danger-bar').style.width = data.danger;
+
+            document.getElementById('stat-obsession-val').innerText = data.obsession;
+            document.getElementById('stat-obsession-bar').style.width = data.obsession;
+
+            const modalVisual = document.getElementById('modal-char-visual');
+            modalVisual.innerHTML = `<i class="fa-solid fa-crown text-6xl text-gold opacity-50"></i>`;
+
+            const modal = document.getElementById('char-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeCharacterModal() {
+            const modal = document.getElementById('char-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+
+        /* ----------------------------------------------------
+           08. CONTRACT CHOICE & PRE-REGISTRATION
+        ---------------------------------------------------- */
+        function makeContractChoice(choice) {
+            const resultBox = document.getElementById('choice-result');
+            const titleEl = document.getElementById('choice-title');
+            const descEl = document.getElementById('choice-desc');
+
+            resultBox.classList.remove('hidden');
+
+            if (choice === 'capo') {
+                switchFaction('crimson');
+                titleEl.innerText = "誓約已簽署：家族教母 (THE CAPO'S CONSORT)";
+                descEl.innerText = "妳已向教父但丁許下血誓。深宵城的所有秩序將為妳而改寫，尊貴與權力盡在掌握。";
+            } else {
+                switchFaction('shadow');
+                titleEl.innerText = "誓約已簽署：暗夜幕後主使 (THE SHADOW MASTERMIND)";
+                descEl.innerText = "妳選擇了暗中締盟。與謀臣瓦勒里烏斯及執刑者路西安攜手，在陰影中掌控帝國命脈。";
+            }
+        }
+
+        function openPreRegisterModal() {
+            const modal = document.getElementById('prereg-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closePreRegisterModal() {
+            const modal = document.getElementById('prereg-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function handlePreRegisterSubmit(e) {
+            e.preventDefault();
+            alert("感謝加入！您的 VIP MAFIA PASS 身份識別碼已成功註冊。");
+            closePreRegisterModal();
+        }
+
+        function openVideoTrailer() {
+            alert("正在載入《THE UNDERWORLD》電影級宣傳預告片...");
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        /* ----------------------------------------------------
+           09. INITIALIZATION ON LOAD
+        ---------------------------------------------------- */
+        window.onload = function() {
+            initThreeJS();
+            animateThreeJS();
+            initEffectCanvas();
+            initScrollAnimations();
+        };
+    </script>
+</body>
+</html>
